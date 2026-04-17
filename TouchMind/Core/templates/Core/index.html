@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TouchMind</title>
+        {% load static %}
+        <link rel = "stylesheet" href = "{% static 'Core/style.css' %}">
+    </head>
+    <body>
+        <h2>TouchMind - 思考の記録</h2>
+        <p>現在の場所/モノ: <strong>{{ tag_id }}</strong></p>
+
+        <input type = "text" id = "thoughtInput" placeholder = "今、何を考えた？">
+        <button id = "sendButton">記録する</button>
+        <div id = "status"></div>
+
+        <script>
+            window.CURRENT_TAG_ID = "{{ tag_id }}"
+        </script>
+        <script src = "{% static 'Core/script.js' %}"></script>
+    </body>
+</html>

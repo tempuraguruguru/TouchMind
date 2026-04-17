@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TouchMind - 思考ログ</title>
+    {% load static %}
+    <link rel = "stylesheet" href = "{% static 'Core/style-list.css' %}">
+</head>
+<body>
+    <h2>💭 思考ログ（履歴）</h2>
+    <a href="/?tag_id=test_tag_001">← 入力画面(テスト用)に戻る</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>日時</th>
+                <th>場所 / モノ (Tag ID)</th>
+                <th>思考内容</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in events %}
+            <tr>
+                <td class="timestamp">{{ event.timestamp|date:"Y/m/d H:i" }}</td>
+                <td><span class="tag">{{ event.tag_id }}</span></td>
+                <td>{{ event.text }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" style="text-align: center; color: #888;">まだ記録がありません。</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
