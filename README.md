@@ -16,7 +16,7 @@
 本プロジェクトはパッケージ管理に **Poetry**、データベース環境に **Docker** を使用しています。
 
 - **Mac Poetryの導入**
-    1. homebrewのインストール
+    1. homebrewのインストール（各自、調べてインストール）
     2. homebrewでpythonのインストール
         ```jsx
         brew install python
@@ -37,8 +37,8 @@
         echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
         source ~/.zshrc
         ```
-    【注意点】
-    プロジェクトの名前(project.name)に空白はだめ
+    **【注意点】**
+    **プロジェクトの名前(project.name)に空白はだめ**
 
 - **poetryの仮想環境のアクティベート**
     1. 仮想環境をアクティベートするPythonを指定します
@@ -54,8 +54,24 @@
         source $(poetry env info --path)/bin/activate
         ```
 
+- **Dockerのインストール**
+    1. https://www.docker.com/products/docker-desktop/
+    2. docker-compose.yml の作成（このプログラムでは、リポジトリをクローンすればOK）
+    3. データベース起動
+        ```bash
+            docker compose up -d
+        ```
+        （※ docker ps と打って、ankane/pgvector が動いていれば成功）
+
+
 ### 1. リポジトリのクローンとパッケージのインストール
+- GitHub（リモートリポジトリ）にあるプログラムをPC（ローカルリポジトリ）にコピー（クローン）し、このプログラムで使っているPoetry環境を適用
 ```bash
 git clone [https://github.com/tempuraguruguru/TouchMind.git](https://github.com/tempuraguruguru/TouchMind.git)
 cd TouchMind
 poetry install
+```
+- 新しくライブラリを追加する場合は以下のコマンド
+```jsx
+    poetry add library_name
+```
