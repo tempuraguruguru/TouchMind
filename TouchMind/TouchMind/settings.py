@@ -29,7 +29,7 @@ load_dotenv(os.path.join(Path(__file__).resolve().parent.parent.parent, '.env'))
 # SECURITY WARNING: keep the secret key used in production secret!
 # 【やっておくべきこと！！！】
 # ① .envファイルを作成（作成場所：TouchMind/.env）
-# ② NGROK_URL=（ここに自分の https://~ を格納）
+# ② DJANGO_SECRET_KEY =（ poetry run python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())' で生成したものを貼り付け）
 django_secret_key = os.getenv('DJANGO_SECRET_KEY')
 SECRET_KEY = django_secret_key
 

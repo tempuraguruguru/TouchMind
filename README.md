@@ -80,7 +80,7 @@ poetry install
 - セキュリティ上公開できない設定値を管理するため、プロジェクトのルートディレクトリ（`poetry.lock`や `pyproject.toml` と同じ階層）に `.env` ファイルを新規作成し、以下の内容を記述してください。
 
 ```env
-# 1. Django SECRET_KEY (**poetry run python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'** で生成したものを貼り付け)
+# 1. Django SECRET_KEY ( poetry run python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())' で生成したものを貼り付け)
 DJANGO_SECRET_KEY = 
 
 # 2. スマホでのテスト用 ngrok URL (例: [https://xxxx.ngrok-free.dev](https://xxxx.ngrok-free.dev))
