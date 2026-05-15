@@ -128,3 +128,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# ログイン画面のURL（@login_requiredで弾かれた時の飛ばし先）
+LOGIN_URL = '/accounts/login/'
+
+# （必要に応じて）ログアウト後のURL
+LOGOUT_REDIRECT_URL = '/accounts/login/'
+
+# ログイン成功時のリダイレクト先（今回は使わないが設定しておく）
+LOGIN_REDIRECT_URL = '/'
+
+# Cookieの有効期限を延ばす（デフォルトはブラウザを閉じるまで）
+# スマホのブラウザを閉じても、半年間（約180日）はログイン状態をキープさせる
+SESSION_COOKIE_AGE = ((60 * 60) * 24) * 7 # 7日間に設定（秒単位）

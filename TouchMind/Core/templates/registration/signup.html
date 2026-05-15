@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang = "ja">
+<head>
+    <meta charset = "UTF-8">
+    <title>TouchMind - 新規アカウント作成</title>
+</head>
+<body>
+    <h2>TouchMind アカウント作成</h2>
+
+    <form method = "post">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <div style = "margin-top: 15px;">
+            <button type = "submit">登録して始める</button>
+        </div>
+    </form>
+
+    <div style = "margin-top: 20px; font-size: 0.9em;">
+        <p><a href = "{% url 'login' %}">既にアカウントをお持ちの方はこちら（ログイン）</a></p>
+    </div>
+</body>
+</html>

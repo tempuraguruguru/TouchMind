@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from pgvector.django import VectorField
 
 class Event(models.Model):
@@ -7,6 +8,8 @@ class Event(models.Model):
     「時間」と「ベクトル」を保存できる
     """
     ## 現実のトリガー
+    user = models.ForeignKey(User, on_delete = models.CASCADE, null = True, blank = True)
+
     ### id = models.BigAutoField(primary_key=True) ← Djangoはこの主キーを自動追加してくれる
     tag_id = models.CharField(max_length = 100, help_text = "NFCタグの固有ID")
 
@@ -22,4 +25,5 @@ class Event(models.Model):
     embedding = VectorField(dimensions = 384, null = True, blank = True)
 
     def __str__(self):
-        return f"{self.tag_id} at {self.time_phase} - {self.text[:20]}"
+        # 誰がどこで記録したか分かるように修正
+        return f"{self.user.username if self.user else 'Unknown'} at {self.tag_id} - {self.timestamp}"

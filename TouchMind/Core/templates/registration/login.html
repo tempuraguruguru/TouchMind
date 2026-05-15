@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang = "ja">
+<head>
+    <meta charset = "UTF-8">
+    <title>TouchMind - ログイン</title>
+</head>
+<body>
+    <h2>TouchMind にログイン</h2>
+
+    {% if form.errors %}
+        <p style="color: red;">ユーザー名かパスワードが間違っています。</p>
+    {% endif %}
+
+    <form method = "post" action="{% url 'login' %}">
+        {% csrf_token %}
+        <div>
+            <label>ユーザー名:</label>
+            <input type = "text" name = "username" required>
+        </div>
+        <div style = "margin-top: 10px;">
+            <label>パスワード:</label>
+            <input type = "password" name = "password" required>
+        </div>
+        <div style = "margin-top: 10px;">
+            <button type = "submit">ログイン</button>
+        </div>
+        <input type = "hidden" name = "next" value = "{{ next }}">
+    </form>
+
+    <div style = "margin-top: 20px; border-top: 1px solid #ccc; padding-top: 10px;">
+        <p>アカウントをお持ちでないですか？</p>
+        <a href = "{% url 'signup' %}">
+            <button type = "button">新規登録はこちら</button>
+        </a>
+    </div>
+</body>
+</html>

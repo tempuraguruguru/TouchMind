@@ -19,7 +19,7 @@ def get_time_phase(dt: datetime.datetime) -> str:
         return "midnight"
 
 
-def process_nfc_event(tag_id: str, text: str, emotion_tag: str = ""):
+def process_nfc_event(tag_id: str, text: str, user = None, emotion_tag: str = ""):
     """
     イベント生成の一連の流れを管理
     タグID、入力テキスト、時間の文脈（morning・afternoon・nightなど）、心情、入力テキストと時間の文脈の埋め込みベクトル
@@ -32,6 +32,7 @@ def process_nfc_event(tag_id: str, text: str, emotion_tag: str = ""):
     embedding = model.encode(contextual_text).tolist()
 
     event = Event.objects.create(
+        user = user,
         tag_id = tag_id,
         text = text,
         time_phase = time_phase,
