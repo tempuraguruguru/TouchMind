@@ -11,16 +11,27 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# 【やっておくべきこと！！！】
+# ① .envファイルを作成（作成場所：TouchMind/.env）
+# ② NGROK_URL=（ここに自分の https://~ を格納）
+load_dotenv(os.path.join(Path(__file__).resolve().parent.parent.parent, '.env'))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-c-f!h8e!(t835j&gxbw$y+5*y4dy$=7rzq)jgz2$dbvcv8p+6j'
+# 【やっておくべきこと！！！】
+# ① .envファイルを作成（作成場所：TouchMind/.env）
+# ② NGROK_URL=（ここに自分の https://~ を格納）
+django_secret_key = os.getenv('DJANGO_SECRET_KEY')
+SECRET_KEY = django_secret_key
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -141,3 +152,10 @@ LOGIN_REDIRECT_URL = '/'
 # Cookieの有効期限を延ばす（デフォルトはブラウザを閉じるまで）
 # スマホのブラウザを閉じても、半年間（約180日）はログイン状態をキープさせる
 SESSION_COOKIE_AGE = ((60 * 60) * 24) * 7 # 7日間に設定（秒単位）
+
+# ngrokからのPOSTリクエストを許可する
+CSRF_TRUSTED_ORIGINS = []
+
+ngrok_url = os.getenv('NGROK_URL')
+if ngrok_url:
+    CSRF_TRUSTED_ORIGINS.append(ngrok_url)
