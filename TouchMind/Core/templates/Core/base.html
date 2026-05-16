@@ -5,10 +5,6 @@
     <title>{% block title %}TouchMind{% endblock %}</title>
     {% load static %}
     <link rel = "stylesheet" href = "{% static 'Core/style-base.css' %}">
-    <style>
-        /* p5.jsなど、ページ特有のスタイルを読み込むためのブロック */
-        {% block extra_style %}{% endblock %}
-    </style>
     {% block extra_head %}{% endblock %}
 </head>
 <body>
