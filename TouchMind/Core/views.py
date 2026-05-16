@@ -139,58 +139,6 @@ def personal_graph_view(request):
     return render(request, 'Core/personal_graph.html')
 
 
-# @login_required
-# def personal_graph_api(request):
-#     """
-#     p5.jsに読み込ませるための個人用ネットワークデータ
-#     """
-#     current_user = request.user
-
-#     # 1. データベース上の「すべての場所(tag_id)」を重複なしで取得
-#     all_locations = Event.objects.values_list('tag_id', flat=True).distinct()
-
-#     # 2. 「現在のユーザー」の思考ログだけを取得
-#     user_events = Event.objects.filter(user=current_user)
-
-#     # ユーザーが訪れたことのある場所のリストを作成
-#     visited_locations = set(user_events.values_list('tag_id', flat=True))
-
-#     nodes_dict = {}
-#     links = []
-
-#     # --- ノードの作成 ---
-#     # ① ユーザーノード（自分だけ）
-#     user_node_id = f"user_{current_user.id}"
-#     nodes_dict[user_node_id] = {"id": user_node_id, "label": current_user.username, "group": "user"}
-
-#     # ② すべての場所ノード（訪れた場所と未訪問でグループを分ける）
-#     for loc in all_locations:
-#         tag_node_id = f"tag_{loc}"
-#         if loc in visited_locations:
-#             group = "visited_location"
-#         else:
-#             group = "unvisited_location"
-
-#         nodes_dict[tag_node_id] = {"id": tag_node_id, "label": loc, "group": group}
-
-#     # ③ 自分の思考ノードとエッジ（線）
-#     for event in user_events:
-#         event_node_id = f"event_{event.id}"
-#         short_text = event.text[:10] + "..." if len(event.text) > 10 else event.text
-#         nodes_dict[event_node_id] = {"id": event_node_id, "label": short_text, "group": "thought"}
-
-#         # 線を繋ぐ：自分 ── 思考
-#         links.append({"source": user_node_id, "target": event_node_id})
-#         # 線を繋ぐ：場所 ── 思考
-#         tag_node_id = f"tag_{event.tag_id}"
-#         links.append({"source": tag_node_id, "target": event_node_id})
-
-#     data = {
-#         "nodes": list(nodes_dict.values()),
-#         "links": links
-#     }
-#     return JsonResponse(data)
-
 @login_required
 def personal_graph_api(request):
     """
