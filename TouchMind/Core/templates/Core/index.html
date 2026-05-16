@@ -1,32 +1,28 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>TouchMind</title>
-        {% load static %}
-        <link rel = "stylesheet" href = "{% static 'Core/style.css' %}">
-    </head>
-    <body>
-        <div style = "text-align: right; font-size: 0.9em; margin-bottom: 10px;">
-            ログイン中: <strong>{{ user.username }}</strong> さん |
+{% extends 'Core/base.html' %}
 
-            <form method = "post" action = "{% url 'logout' %}" style="display: inline;">
-                {% csrf_token %}
-                <button type = "submit" style = "background: none; border: none; color: #0066cc; text-decoration: underline; cursor: pointer; padding: 0;">
-                    ログアウト
-                </button>
-            </form>
-        </div>
+{% block title %}TouchMind - 記録画面{% endblock %}
 
-        <h2>TouchMind - 思考の記録</h2>
-        <p>現在の場所/モノ: <strong>{{ tag_id }}</strong></p>
+{% load static %}
+{% block extra_head %}
+    <link rel = "stylesheet" href = "{% static 'Core/style.css' %}">
+{% endblock %}
 
-        <input type = "text" id = "thoughtInput" placeholder = "今、何を考えた？">
-        <button id = "sendButton">記録する</button>
-        <div id = "status"></div>
+{% block extra_style %}
+    /* 必要であれば index.html 特有のCSSをここに書く */
+{% endblock %}
 
-        <script>
-            window.CURRENT_TAG_ID = "{{ tag_id }}"
-        </script>
-        <script src = "{% static 'Core/script.js' %}"></script>
-    </body>
-</html>
+{% block content %}
+<div class = "container">
+    <h2>TouchMind - 思考の記録</h2>
+    <p>現在の場所(Tag ID): <strong>{{ tag_id }}</strong></p>
+
+    <input type = "text" id = "thoughtInput" placeholder = "今、何を考えた？">
+    <button id = "sendButton">記録する</button>
+    <div id = "status"></div>
+
+    <script>
+        window.CURRENT_TAG_ID = "{{ tag_id }}"
+    </script>
+    <script src = "{% static 'Core/script.js' %}"></script>
+</div>
+{% endblock %}

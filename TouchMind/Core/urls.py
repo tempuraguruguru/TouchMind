@@ -8,4 +8,6 @@ urlpatterns = [
     path('signup/', views.signup, name = 'signup'), ## 新規ユーザー登録画面
     path('graph/', views.graph_view, name = 'graph_view'),
     path('api/graph-data/', views.graph_api, name = 'graph_api'),
+    path('personal-graph/', views.personal_graph_view, name = 'personal_graph_view'),
+    path('api/personal-graph-data/', views.personal_graph_api, name = 'personal_graph_api'),
 ]

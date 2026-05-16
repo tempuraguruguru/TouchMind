@@ -1,20 +1,18 @@
-<!DOCTYPE html>
-<html lang = "ja">
-<head>
-    <meta charset = "UTF-8">
-    <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
-    <title>TouchMind - 思考ログ</title>
-    {% load static %}
+{% extends 'Core/base.html' %}
+
+{% block title %}TouchMind - 記録画面{% endblock %}
+
+{% load static %}
+{% block extra_head %}
     <link rel = "stylesheet" href = "{% static 'Core/style-list.css' %}">
-</head>
-<body>
-    <div style = "display: flex; justify-content: space-between; align-items: center;">
-        <a href = "/">← 入力画面に戻る</a>
-        <form method = "post" action = "{% url 'logout' %}" style = "display: inline;">
-            {% csrf_token %}
-            <button type = "submit" style = "background: none; border: none; color: #0066cc; text-decoration: underline; cursor: pointer; padding: 0;">ログアウト</button>
-        </form>
-    </div>
+{% endblock %}
+
+{% block extra_style %}
+    /* 必要であれば index.html 特有のCSSをここに書く */
+{% endblock %}
+
+{% block content %}
+<div class = "container">
 
     <h2>💭 思考ログ（履歴）</h2>
     <a href = "/?tag_id=test_tag_001">← 入力画面(テスト用)に戻る</a>
@@ -43,5 +41,5 @@
             {% endfor %}
         </tbody>
     </table>
-</body>
-</html>
+</div>
+{% endblock %}

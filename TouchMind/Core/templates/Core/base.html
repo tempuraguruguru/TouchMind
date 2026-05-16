@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang = "ja">
+<head>
+    <meta charset = "UTF-8">
+    <title>{% block title %}TouchMind{% endblock %}</title>
+    {% load static %}
+    <link rel = "stylesheet" href = "{% static 'Core/style-base.css' %}">
+    <style>
+        /* p5.jsなど、ページ特有のスタイルを読み込むためのブロック */
+        {% block extra_style %}{% endblock %}
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <div class = "navbar">
+        <div class = "nav-links">
+            <a href = "{% url 'index' %}" style = "font-size: 18px; margin-right: 30px;">🧠 TouchMind</a>
+            <a href = "{% url 'index' %}">✍️ 記録する</a>
+            <a href = "{% url 'event_list' %}">📋 履歴一覧</a>
+            <a href = "{% url 'personal_graph_view' %}">🌌 マイマップ</a>
+            <a href = "{% url 'graph_view' %}">🌐 全体マップ</a>
+        </div>
+        <div class = "user-info">
+            {% if user.is_authenticated %}
+                <span>👤 {{ user.username }}</span>
+                <form method = "post" action = "{% url 'logout' %}" style = "display: inline; margin: 0;">
+                    {% csrf_token %}
+                    <button type = "submit" style = "background:none; border:none; color:#0066cc; text-decoration:underline; cursor:pointer; padding:0;">ログアウト</button>
+                </form>
+            {% else %}
+                <a href = "{% url 'login' %}" style = "text-decoration: none; color: #0066cc;">ログイン</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div id = "content-area">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

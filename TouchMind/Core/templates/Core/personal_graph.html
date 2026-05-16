@@ -1,0 +1,29 @@
+{% extends 'Core/base.html' %}
+
+{% block title %}TouchMind - 記録画面{% endblock %}
+
+{% load static %}
+{% block extra_head %}
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
+    <link rel = "stylesheet" href = "{% static 'Core/style-personal_graph.css' %}">
+{% endblock %}
+
+{% block extra_style %}
+    /* 必要であれば index.html 特有のCSSをここに書く */
+{% endblock %}
+
+{% block content %}
+<div class = "container">
+    <div id = "ui-layer">
+        <h2 style = "margin:0 0 10px 0;">マイ・ネットワーク</h2>
+        <p style = "margin:0; font-size:14px;">🔴 自分 &nbsp; 🟢 自分の思考</p>
+        <p style = "margin:5px 0 0 0; font-size:14px;">🔵 訪れた場所 &nbsp; ⚪ 未開拓の場所</p>
+
+        <div style = "margin-top:15px; font-size:12px; pointer-events: auto;">
+            <a href = "/" style = "margin-right: 15px; text-decoration: none; color: #0066cc;">← 入力に戻る</a>
+            <a href = "/graph/" style = "margin-right: 15px; text-decoration: none; color: #0066cc;">🌐 全体マップを見る</a>
+        </div>
+    </div>
+    <script src = "{% static 'Core/script-personal_graph.js' %}"></script>
+</div>
+{% endblock %}

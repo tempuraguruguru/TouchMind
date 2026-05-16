@@ -1,0 +1,58 @@
+body{
+    margin: 0;
+    font-family: sans-serif;
+    background-color: #f0f4f8;
+}
+
+/* 共通ヘッダー（ナビゲーションバー）のスタイル */
+.navbar {
+    height: 50px;
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: relative;
+    z-index: 1000; /* p5.jsのキャンバスより上に表示 */
+
+
+
+    /* ★修正: fixed ではなく sticky を使うと、空間を確保したまま上に固定されます */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-sizing: border-box; /* paddingを含めて正確に50pxにする */
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #333;
+    margin-right: 15px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.nav-links a:hover{
+    color: #0066cc;
+}
+
+.user-info{
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+
+
+
+
+/* コンテンツエリア（ここが重要！） */
+#content-area {
+    /* ★修正: 画面の高さ(100vh) から ヘッダー(50px) を引いた高さを強制する */
+    height: calc(100vh - 50px);
+    position: relative; /* 子要素（UIパネルやキャンバス）の絶対配置の基準にする */
+    overflow-y: auto; /* list.html など、内容が多い時はここだけスクロールさせる */
+    width: 100%;
+}
