@@ -27,6 +27,15 @@ def event_list(request):
     return render(request, 'Core/list.html', {'events': events})
 
 
+@login_required
+def personal_event_list(request):
+    """自分だけの思考ログ（履歴）画面"""
+    # filter(user=request.user) で自分のデータだけを抽出
+    # ※ id の降順（新しい順）などで並び替える場合は .order_by('-id') 等を付ける
+    events = Event.objects.filter(user=request.user).order_by('-id')
+    return render(request, 'Core/personal_list.html', {'events': events})
+
+
 # API検証用
 @csrf_exempt
 def record_event(request):
