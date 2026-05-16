@@ -12,7 +12,7 @@
 <div class = "container">
     <div id = "ui-layer">
         <h2 style = "margin:0 0 10px 0;">マイ・ネットワーク</h2>
-        <p style = "margin:0; font-size:14px;">🔴 自分 &nbsp; 🟢 自分の思考</p>
+        <p style = "margin:0; font-size:14px;">🟢 自分の思考</p>
         <p style = "margin:5px 0 0 0; font-size:14px;">🔵 訪れた場所 &nbsp; ⚪ 未開拓の場所</p>
 
         <div style = "margin-top:15px; font-size:12px; pointer-events: auto;">
@@ -20,6 +20,15 @@
             <a href = "/graph/" style = "margin-right: 15px; text-decoration: none; color: #0066cc;">🌐 全体マップを見る</a>
         </div>
     </div>
+
+    <div id = "hint-layer">
+        <p style = "margin:0; font-size:13px; color:#555; line-height:1.5;">
+            💡 <strong>Tips:</strong><br>
+            線が絡まったら <kbd>Space</kbd> キーで<br>
+            全体を揺らして形を整えられます。
+        </p>
+    </div>
+
     <script src = "{% static 'Core/script-personal_graph.js' %}"></script>
 </div>
 {% endblock %}

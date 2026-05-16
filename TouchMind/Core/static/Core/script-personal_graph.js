@@ -10,7 +10,7 @@ let isDraggingNetwork = false;
 let dragStartX, dragStartY;
 
 function preload() {
-    // ★ APIの向き先をパーソナル用に変更
+    // APIの向き先をパーソナル用に変更
     fetch('/api/personal-graph-data/')
         .then(response => response.json())
         .then(data => {
@@ -31,13 +31,24 @@ function setup() {
 }
 
 
-
 function initGraph(rawNodes, rawLinks) {
-    rawNodes.forEach(n => {
+    // ノードの数に合わせて角度を計算し、円状に並べる
+    let angleStep = TWO_PI / rawNodes.length;
+    let radius = Math.min(width, height) * 0.3; // 広がる前の初期範囲
+
+    rawNodes.forEach((n, index) => {
+        let angle = random(TWO_PI);
+        let r = random(radius); // 0〜radiusのランダムな距離
+
+        let isLocation = (n.group && n.group.includes('location'));
+        let nodeSize = n.group.includes('location') ? 50 : 30;
+
         let node = {
             id: n.id, label: n.label, group: n.group,
-            x: random(width), y: random(height),
-            vx: 0, vy: 0
+            x: width / 2 + Math.cos(angle) * r,
+            y: height / 2 + Math.sin(angle) * r,
+            vx: 0, vy: 0,
+            size: nodeSize
         };
         nodes.push(node);
         nodeMap[n.id] = node;
@@ -57,12 +68,12 @@ function draw() {
 
     if (nodes.length === 0) return;
 
-    energy *= 0.95;
+    energy *= 0.99;
     if (energy < 0.01) energy = 0;
 
     let k = 0.05 * energy;
-    let repulsion = 3000 * energy;
-    let damping = 0.85;
+    let repulsion = 1000 * energy;
+    let damping = 0.5;
 
     for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
@@ -70,9 +81,9 @@ function draw() {
             let dy = nodes[i].y - nodes[j].y;
             let distSq = dx * dx + dy * dy;
 
-            if (distSq < 100) distSq = 100;
+            if (distSq < 2500) distSq = 2500;
 
-            if (distSq > 0 && distSq < 40000) {
+            if (distSq > 0 && distSq < 90000) {
                 let force = repulsion / distSq;
                 let fx = force * dx;
                 let fy = force * dy;
@@ -113,6 +124,10 @@ function draw() {
     noStroke();
     for (let n of nodes) {
         if (n !== draggedNode) {
+            let maxV = 8;
+            n.vx = constrain(n.vx, -maxV, maxV);
+            n.vy = constrain(n.vy, -maxV, maxV);
+
             n.x += n.vx; n.y += n.vy;
             n.vx *= damping; n.vy *= damping;
 
@@ -120,21 +135,21 @@ function draw() {
             if (Math.abs(n.vy) < 0.05) n.vy = 0;
         }
 
-        // ★色分けの処理を変更
-        if (n.group === 'user') {
-            fill(255, 100, 100); // 赤: 自分
-        } else if (n.group === 'visited_location') {
-            fill(100, 150, 255); // 青: 訪れた場所
-        } else if (n.group === 'unvisited_location') {
-            fill(200, 200, 200); // グレー: 未開拓の場所（線が繋がっていない）
-        } else {
-            fill(100, 200, 100); // 緑: 思考
-        }
+        // 色分け処理
+        if (n.group === 'user') fill(255, 100, 100);
+        else if (n.group === 'location' || n.group === 'visited_location') fill(100, 150, 255);
+        else if (n.group === 'unvisited_location') fill(200, 200, 200);
+        else fill(100, 200, 100);
 
-        ellipse(n.x, n.y, 30, 30);
+        // もし size が undefined なら強制的に 30 にする（画面から消えるのを防ぐ）
+        let s = n.size || 30;
 
+        // 固定の30ではなく、n.size を使う
+        ellipse(n.x, n.y, n.size, n.size);
+
+        // 文字が円に被らないように、サイズに合わせて少し下にズラす
         fill(50);
-        text(n.label, n.x, n.y + 25);
+        text(n.label, n.x, n.y + (n.size / 2) + 12);
     }
     pop();
 }
@@ -147,7 +162,8 @@ function mousePressed() {
     let nodeClicked = false;
 
     for (let n of nodes) {
-        if (dist(mx, my, n.x, n.y) < 15) {
+        // 固定の15ではなく、そのノードの半径(n.size / 2)で当たり判定をする
+        if (dist(mx, my, n.x, n.y) < n.size / 2) {
             draggedNode = n;
             energy = 1.0;
             nodeClicked = true;
@@ -169,7 +185,7 @@ function mouseDragged() {
         draggedNode.y = mouseY - offsetY;
         draggedNode.vx = 0;
         draggedNode.vy = 0;
-        energy = 1.0;
+        if (energy < 0.2) energy = 0.2;
     }
     else if (isDraggingNetwork) {
         offsetX = mouseX - dragStartX;
@@ -187,4 +203,17 @@ function mouseReleased() {
 function windowResized() {
     // リサイズ時もヘッダーの分(50px)を引く
     resizeCanvas(windowWidth, windowHeight - 50);
+}
+
+
+function keyPressed() {
+    // スペースキーが押されたら、ネットワークを揺らす（シェイク）
+    if (key === ' ') {
+        energy = 1.0; // 熱量をMAXに戻す
+        for (let n of nodes) {
+            // 各ノードにランダムな強い衝撃を与えて、局所的な絡まりを吹き飛ばす
+            n.vx += random(-100, 100);
+            n.vy += random(-100, 100);
+        }
+    }
 }

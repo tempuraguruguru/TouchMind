@@ -4,7 +4,6 @@ let nodeMap = {};
 let energy = 1.0;
 
 let draggedNode = null;
-// ★追加：画面全体のスクロール（パン）用の変数
 let offsetX = 0;
 let offsetY = 0;
 let isDraggingNetwork = false;
@@ -32,11 +31,26 @@ function setup() {
 
 
 function initGraph(rawNodes, rawLinks) {
-    rawNodes.forEach(n => {
+    // ノードの数に合わせて角度を計算し、円状に並べる
+    let angleStep = TWO_PI / rawNodes.length;
+    let radius = Math.min(width, height) * 0.3; // 広がる前の初期範囲
+
+    rawNodes.forEach((n, index) => {
+        // ★変更：規則的な角度計算をやめ、中心付近のランダムな位置に配置する
+        let angle = random(TWO_PI);
+        let r = random(radius); // 0〜radiusのランダムな距離
+
+        // グループ名に 'location' が含まれていればサイズ50、それ以外は30
+        // n.groupが空っぽ（undefined）でもエラーにならないように安全策を追加
+        let isLocation = (n.group && n.group.includes('location'));
+        let nodeSize = n.group.includes('location') ? 50 : 30;
+
         let node = {
             id: n.id, label: n.label, group: n.group,
-            x: random(width), y: random(height),
-            vx: 0, vy: 0
+            x: width / 2 + Math.cos(angle) * r,
+            y: height / 2 + Math.sin(angle) * r,
+            vx: 0, vy: 0,
+            size: nodeSize
         };
         nodes.push(node);
         nodeMap[n.id] = node;
@@ -56,13 +70,12 @@ function draw() {
 
     if (nodes.length === 0) return;
 
-    // --- 物理シミュレーション (オフセットの影響を受けない絶対座標で計算) ---
-    energy *= 0.95;
+    energy *= 0.99;
     if (energy < 0.01) energy = 0;
 
     let k = 0.05 * energy;
-    let repulsion = 3000 * energy;
-    let damping = 0.85;
+    let repulsion = 1000 * energy;
+    let damping = 0.5;
 
     // 1. 斥力
     for (let i = 0; i < nodes.length; i++) {
@@ -71,9 +84,9 @@ function draw() {
             let dy = nodes[i].y - nodes[j].y;
             let distSq = dx * dx + dy * dy;
 
-            if (distSq < 100) distSq = 100;
+            if (distSq < 2500) distSq = 2500;
 
-            if (distSq > 0 && distSq < 40000) {
+            if (distSq > 0 && distSq < 90000) {
                 let force = repulsion / distSq;
                 let fx = force * dx;
                 let fy = force * dy;
@@ -100,11 +113,11 @@ function draw() {
 
     // 3. 中心への引力
     for (let n of nodes) {
-        n.vx += (width / 2 - n.x) * 0.001 * energy;
-        n.vy += (height / 2 - n.y) * 0.001 * energy;
+        n.vx += (width / 2 - n.x) * 0.0005 * energy;
+        n.vy += (height / 2 - n.y) * 0.0005 * energy;
     }
 
-    // --- ★追加：画面の描画だけをズラす（カメラの移動） ---
+    // --- 画面の描画だけをズラす（カメラの移動） ---
     push(); // 現在の描画状態を保存
     translate(offsetX, offsetY); // 画面全体をマウスのドラッグ量に合わせて移動
 
@@ -117,6 +130,10 @@ function draw() {
     noStroke();
     for (let n of nodes) {
         if (n !== draggedNode) {
+            let maxV = 8;
+            n.vx = constrain(n.vx, -maxV, maxV);
+            n.vy = constrain(n.vy, -maxV, maxV);
+
             n.x += n.vx; n.y += n.vy;
             n.vx *= damping; n.vy *= damping;
 
@@ -124,14 +141,21 @@ function draw() {
             if (Math.abs(n.vy) < 0.05) n.vy = 0;
         }
 
+        // 色分け処理
         if (n.group === 'user') fill(255, 100, 100);
-        else if (n.group === 'location') fill(100, 150, 255);
+        else if (n.group === 'location' || n.group === 'visited_location') fill(100, 150, 255);
+        else if (n.group === 'unvisited_location') fill(200, 200, 200);
         else fill(100, 200, 100);
 
-        ellipse(n.x, n.y, 30, 30);
+        // もし size が undefined なら強制的に 30 にする（画面から消えるのを防ぐ）
+        let s = n.size || 30;
 
+        // 固定の30ではなく、n.size を使う
+        ellipse(n.x, n.y, n.size, n.size);
+
+        // 文字が円に被らないように、サイズに合わせて少し下にズラす
         fill(50);
-        text(n.label, n.x, n.y + 25);
+        text(n.label, n.x, n.y + (n.size / 2) + 12);
     }
     pop(); // 描画状態を元に戻す（これがないとUIまでズレてしまう）
 }
@@ -139,14 +163,14 @@ function draw() {
 
 // --- マウスイベント処理 ---
 function mousePressed() {
-    // ★変更：マウスの座標からカメラのズレ（オフセット）を引いて、真の座標を計算
+    // マウスの座標からカメラのズレ（オフセット）を引いて、真の座標を計算
     let mx = mouseX - offsetX;
     let my = mouseY - offsetY;
     let nodeClicked = false;
 
-    // ノードをクリックしたか判定
     for (let n of nodes) {
-        if (dist(mx, my, n.x, n.y) < 15) {
+        // 固定の15ではなく、そのノードの半径(n.size / 2)で当たり判定をする
+        if (dist(mx, my, n.x, n.y) < n.size / 2) {
             draggedNode = n;
             energy = 1.0;
             nodeClicked = true;
@@ -154,7 +178,7 @@ function mousePressed() {
         }
     }
 
-    // ★追加：ノード以外（背景）をクリックした場合は、全体スクロールを開始
+    // ノード以外（背景）をクリックした場合は、全体スクロールを開始
     if (!nodeClicked) {
         isDraggingNetwork = true;
         dragStartX = mouseX - offsetX;
@@ -170,9 +194,10 @@ function mouseDragged() {
         draggedNode.y = mouseY - offsetY;
         draggedNode.vx = 0;
         draggedNode.vy = 0;
-        energy = 1.0;
+        // energy = 1.0;
+        if (energy < 0.2) energy = 0.2;
     }
-    // ★追加：背景をドラッグしている場合（カメラの移動）
+    // 背景をドラッグしている場合（カメラの移動）
     else if (isDraggingNetwork) {
         offsetX = mouseX - dragStartX;
         offsetY = mouseY - dragStartY;
@@ -189,4 +214,17 @@ function mouseReleased() {
 function windowResized() {
     // リサイズ時もヘッダーの分(50px)を引く
     resizeCanvas(windowWidth, windowHeight - 50);
+}
+
+
+function keyPressed() {
+    // スペースキーが押されたら、ネットワークを揺らす（シェイク）
+    if (key === ' ') {
+        energy = 1.0; // 熱量をMAXに戻す
+        for (let n of nodes) {
+            // 各ノードにランダムな強い衝撃を与えて、局所的な絡まりを吹き飛ばす
+            n.vx += random(-100, 100);
+            n.vy += random(-100, 100);
+        }
+    }
 }

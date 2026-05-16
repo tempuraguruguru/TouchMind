@@ -15,3 +15,29 @@ body{
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     pointer-events: none;
 }
+
+#hint-layer {
+    position: absolute;
+    bottom: 20px; /* 下から20pxの位置 */
+    left: 20px;   /* 左から20pxの位置 */
+    background: rgba(255,255,255,0.9);
+    padding: 12px 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    pointer-events: none; /* マウスイベントを貫通させる */
+    z-index: 10;
+}
+
+kbd {
+    background-color: #f7f7f7;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.2), inset 0 0 0 2px #fff;
+    color: #333;
+    display: inline-block;
+    font-family: sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 2px 5px;
+    margin: 0 2px;
+}
