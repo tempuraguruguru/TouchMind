@@ -12,8 +12,15 @@
 <div class = "container">
     <div id = "ui-layer">
         <h2 style = "margin:0 0 10px 0;">思考ネットワーク</h2>
-        <p style = "margin:0;">🔴 人 &nbsp; 🔵 場所 &nbsp; 🟢 思考</p>
-        <!-- <p style = "margin-top:10px; font-size:12px;"><a href = "/" style = "pointer-events: auto;">← 戻る</a></p> -->
+        <!-- <p style="margin:0;">🔵 場所 &nbsp; 🟢 思考</p> -->
+        <!-- <p style = "margin:0;">🔴 人 &nbsp; 🔵 場所 &nbsp; 🟢 思考</p> -->
+        <div style = "margin-top: 10px; margin-bottom: 10px; font-size: 16px; pointer-events: auto;">
+            <label style = "cursor: pointer;">
+                <input type = "checkbox" id = "user-nodes-toggle" checked onchange="toggleUserNodes(this.checked)">
+                🔴 人ノードを表示する
+            </label>
+        </div>
+        <p style="margin:0;">🔵 場所 &nbsp; 🟢 思考</p>
 
         <div style = "margin-top:10px; font-size:12px;">
             <a href = "/" style = "pointer-events: auto; margin-right: 15px;">← 戻る</a>

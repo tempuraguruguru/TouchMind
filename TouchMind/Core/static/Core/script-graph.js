@@ -8,6 +8,7 @@ let offsetX = 0;
 let offsetY = 0;
 let isDraggingNetwork = false;
 let dragStartX, dragStartY;
+let showUserNodes = true; // ★人ノードを表示するかどうかのフラグ
 
 function preload() {
     fetch('/api/graph-data/')
@@ -65,6 +66,13 @@ function initGraph(rawNodes, rawLinks) {
 }
 
 
+// HTMLのチェックボックスから呼ばれる関数を追加
+function toggleUserNodes(checked) {
+    showUserNodes = checked;
+    energy = 0.5;
+}
+
+
 function draw() {
     background('#f0f4f8');
 
@@ -79,7 +87,13 @@ function draw() {
 
     // 1. 斥力
     for (let i = 0; i < nodes.length; i++) {
+        // もし人ノードが非表示で、かつ現在のノードが人なら計算をスキップ
+        if (!showUserNodes && nodes[i].group === 'user') continue;
+
         for (let j = i + 1; j < nodes.length; j++) {
+            // 相手のノードが非表示の人ならスキップ
+            if (!showUserNodes && nodes[j].group === 'user') continue;
+
             let dx = nodes[i].x - nodes[j].x;
             let dy = nodes[i].y - nodes[j].y;
             let distSq = dx * dx + dy * dy;
@@ -99,6 +113,10 @@ function draw() {
     // 2. 引力
     let restLength = 100;
     for (let l of links) {
+        // リンクの「出発点」または「到着点」が人ノード、かつ非表示設定なら、このリンクの引力計算をスキップ
+        if (!showUserNodes && (l.source.group === 'user' || l.target.group === 'user')) {
+            continue;
+        }
         let dx = l.target.x - l.source.x;
         let dy = l.target.y - l.source.y;
         let dist = Math.sqrt(dx * dx + dy * dy) + 0.1;
@@ -113,6 +131,7 @@ function draw() {
 
     // 3. 中心への引力
     for (let n of nodes) {
+        if (!showUserNodes && n.group === 'user') continue;
         n.vx += (width / 2 - n.x) * 0.0005 * energy;
         n.vy += (height / 2 - n.y) * 0.0005 * energy;
     }
@@ -124,11 +143,19 @@ function draw() {
     stroke(180);
     strokeWeight(1);
     for (let l of links) {
+        // 非表示の人が絡むリンクは描画しない
+        if (!showUserNodes && (l.source.group === 'user' || l.target.group === 'user')) {
+            continue;
+        }
         line(l.source.x, l.source.y, l.target.x, l.target.y);
     }
 
     noStroke();
     for (let n of nodes) {
+        // 非表示の人のノードは位置更新も描画もしない
+        if (!showUserNodes && n.group === 'user') {
+            continue;
+        }
         if (n !== draggedNode) {
             let maxV = 8;
             n.vx = constrain(n.vx, -maxV, maxV);
@@ -169,6 +196,9 @@ function mousePressed() {
     let nodeClicked = false;
 
     for (let n of nodes) {
+        // 非表示状態の人ノードはクリック（ドラッグ）の対象外にする
+        if (!showUserNodes && n.group === 'user') continue;
+
         // 固定の15ではなく、そのノードの半径(n.size / 2)で当たり判定をする
         if (dist(mx, my, n.x, n.y) < n.size / 2) {
             draggedNode = n;
