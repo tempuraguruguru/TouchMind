@@ -2,12 +2,15 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 import json
 from . import services
 from .models import Event, Location
+from .services import get_personalized_suggestion
+
 
 @login_required
 def index(request):
@@ -29,7 +32,9 @@ def event_list(request):
 
 @login_required
 def personal_event_list(request):
-    """自分だけの思考ログ（履歴）画面"""
+    """
+    自分だけの思考ログ（履歴）画面
+    """
     # filter(user=request.user) で自分のデータだけを抽出
     # ※ id の降順（新しい順）などで並び替える場合は .order_by('-id') 等を付ける
     events = Event.objects.filter(user=request.user).order_by('-id')
@@ -103,7 +108,9 @@ def graph_view(request):
 
 @login_required
 def graph_api(request):
-    """p5.jsに読み込ませるためのノードとエッジのJSONデータを返す"""
+    """
+    p5.jsに読み込ませるためのノードとエッジのJSONデータを返す
+    """
     events = Event.objects.all()
 
     # 追加：DBからすべてのLocation情報を取得し、tag_idをキーにした辞書を作成
@@ -229,3 +236,102 @@ def personal_graph_api(request):
         "links": links
     }
     return JsonResponse(data)
+
+
+@login_required
+def personalized_suggestion_api(request):
+    """
+    現在のtag_idとユーザー情報から、最適な提案を返すAPI
+    """
+    tag_id = request.GET.get('tag_id', '')
+
+    if not tag_id:
+        return JsonResponse({"status": "error", "message": "tag_id is required"}, status = 400)
+
+    # 提案ロジックを呼び出し
+    suggestion = get_personalized_suggestion(request.user, tag_id)
+
+    return JsonResponse(suggestion)
+
+
+@login_required
+def location_manager_view(request):
+    """
+    場所管理画面の表示
+    """
+    return render(request, 'Core/location_manager.html')
+
+
+@login_required
+def get_locations_api(request):
+    """
+    登録済みの場所一覧を返すAPI
+    """
+    locations = Location.objects.all().order_by('-id')
+    data = [{
+        "id": loc.id,
+        "tag_id": loc.tag_id,
+        "name": loc.name,
+        "category": loc.category,
+        "description": loc.description or ""
+    } for loc in locations]
+    return JsonResponse({"status": "success", "locations": data})
+
+
+@login_required
+@require_POST
+def bulk_add_locations_api(request):
+    """
+    複数の場所をまとめて追加するAPI
+    """
+    try:
+        data = json.loads(request.body)
+        locations_data = data.get('locations', [])
+
+        created_count = 0
+        for item in locations_data:
+            tag_id = item.get('tag_id', '').strip()
+            if not tag_id:
+                continue
+
+            # すでに存在する tag_id の場合はスキップ、または上書き（今回は安全のため作成のみ）
+            if Location.objects.filter(tag_id = tag_id).exists():
+                continue
+
+            # Locationの作成 (nameが空ならモデルのsave()で自動補完されます)
+            Location.objects.create(
+                tag_id = tag_id,
+                name = item.get('name', '').strip(),
+                category = item.get('category', 'work'),
+                description = item.get('description', '').strip()
+            )
+            created_count += 1
+
+        return JsonResponse({"status": "success", "message": f"{created_count}件の場所を追加しました。"})
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status = 400)
+
+
+@login_required
+@require_POST
+def update_location_api(request):
+    """
+    既存の場所の詳細を後から変更するAPI
+    """
+    try:
+        data = json.loads(request.body)
+        tag_id = data.get('tag_id', '')
+
+        location = Location.objects.filter(tag_id = tag_id).first()
+        if not location:
+            return JsonResponse({"status": "error", "message": "指定された場所が見つかりません。"}, status = 404)
+
+        # 情報を更新
+        location.name = data.get('name', '').strip() or tag_id # 空ならtag_idにする
+        location.category = data.get('category', 'work')
+        location.description = data.get('description', '').strip()
+        location.save()
+
+        return JsonResponse({"status": "success", "message": "場所の情報を更新しました。"})
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status = 400)

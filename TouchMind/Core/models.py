@@ -10,6 +10,7 @@ class Location(models.Model):
     CATEGORY_CHOICES = [
         ('work', '💻 ワーク（研究・作業）'),
         ('relax', '☕ リラックス（カフェ・自宅）'),
+        ('pokemon', '🎮 ポケモン'), # ケーススタディ用
         ('transit', '🚃 移動・その他'),
     ]
 

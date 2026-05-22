@@ -5,3 +5,13 @@
 .container{
     padding: 20px;
 }
+
+#personalized-card{
+    display:none;
+    background:#fffdf5;
+    border:1px solid #f5ebd0;
+    border-radius:12px;
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.02);
+}
