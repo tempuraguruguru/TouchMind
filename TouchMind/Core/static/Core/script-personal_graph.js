@@ -45,6 +45,8 @@ function initGraph(rawNodes, rawLinks) {
 
         let node = {
             id: n.id, label: n.label, group: n.group,
+            detail: n.detail,
+            category: n.category,
             x: width / 2 + Math.cos(angle) * r,
             y: height / 2 + Math.sin(angle) * r,
             vx: 0, vy: 0,
@@ -160,13 +162,34 @@ function mousePressed() {
     let mx = mouseX - offsetX;
     let my = mouseY - offsetY;
     let nodeClicked = false;
+    let detailPanel = document.getElementById('detail-panel');
 
     for (let n of nodes) {
+        // if (!showUserNodes && n.group === 'user') continue;
+
         // 固定の15ではなく、そのノードの半径(n.size / 2)で当たり判定をする
         if (dist(mx, my, n.x, n.y) < n.size / 2) {
             draggedNode = n;
             energy = 1.0;
             nodeClicked = true;
+
+            // 追加：クリックしたのが場所ノードなら詳細パネルを表示
+            if (n.group.includes('location')) {
+                document.getElementById('detail-title').innerText = n.label;
+
+                // カテゴリの日本語表記変換（簡易版）
+                let catText = n.category === 'work' ? '💻 ワーク' :
+                              n.category === 'relax' ? '☕ リラックス' :
+                              n.category === 'transit' ? '🚃 移動' : '📍 未分類';
+
+                document.getElementById('detail-category').innerText = catText;
+                document.getElementById('detail-desc').innerText = n.detail || "詳細情報がありません。";
+
+                detailPanel.style.display = 'block'; // パネルを表示
+            } else {
+                detailPanel.style.display = 'none'; // 思考ノードなどをクリックしたら隠す
+            }
+
             break;
         }
     }
@@ -175,6 +198,7 @@ function mousePressed() {
         isDraggingNetwork = true;
         dragStartX = mouseX - offsetX;
         dragStartY = mouseY - offsetY;
+        detailPanel.style.display = 'none'; // 何もない背景をクリックしても隠す
     }
 }
 

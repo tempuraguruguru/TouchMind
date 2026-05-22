@@ -42,3 +42,38 @@ kbd {
     padding: 2px 5px;
     margin: 0 2px;
 }
+
+#detail-panel{
+    display: none;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 280px;
+    background: rgba(255,255,255,0.95);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    z-index: 100;
+}
+
+#detail-title{
+    margin: 0 0 10px 0;
+    color:#333;
+}
+
+#detail-category{
+    display: inline-block;
+    padding: 4px 8px;
+    background: #e6f2ff;
+    color: #0066cc;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-bottom: 12px;
+}
+
+#detail-desc{
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;
+}

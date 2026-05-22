@@ -7,7 +7,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 import json
 from . import services
-from .models import Event
+from .models import Event, Location
 
 @login_required
 def index(request):
@@ -106,6 +106,9 @@ def graph_api(request):
     """p5.jsに読み込ませるためのノードとエッジのJSONデータを返す"""
     events = Event.objects.all()
 
+    # 追加：DBからすべてのLocation情報を取得し、tag_idをキーにした辞書を作成
+    locations_info = {loc.tag_id: loc for loc in Location.objects.all()}
+
     nodes_dict = {}
     links = []
 
@@ -119,7 +122,23 @@ def graph_api(request):
         # 2. タグノード（場所・モノ）
         tag_node_id = f"tag_{event.tag_id}"
         if tag_node_id not in nodes_dict:
-            nodes_dict[tag_node_id] = {"id": tag_node_id, "label": event.tag_id, "group": "location"}
+            # ★追加：Locationテーブルから該当する場所のオブジェクトを取得
+            loc_obj = locations_info.get(event.tag_id)
+
+            # 情報があればそれを使用し、なければ登録されたtag_id（英名など）をそのまま使う
+            display_name = loc_obj.name if loc_obj else event.tag_id
+            detail_text = loc_obj.description if loc_obj else "未登録の場所です。"
+            category = loc_obj.category if loc_obj else "unknown"
+
+            nodes_dict[tag_node_id] = {
+                "id": tag_node_id,
+                # "label": event.tag_id,
+                # "group": "location",
+                "label": display_name,  # わかりやすい名前に上書き
+                "group": "location",
+                "detail": detail_text,  # 詳細パネル用
+                "category": category    # 詳細パネル用
+            }
 
         # 3. イベントノード（思考内容）
         event_node_id = f"event_{event.id}"
@@ -164,6 +183,9 @@ def personal_graph_api(request):
     # ユーザーが訪れたことのある場所のリストを作成
     visited_locations = set(user_events.values_list('tag_id', flat=True))
 
+    # 追加：DBからすべてのLocation情報を取得し、tag_idをキーにした辞書を作成
+    locations_info = {loc.tag_id: loc for loc in Location.objects.all()}
+
     nodes_dict = {}
     links = []
 
@@ -176,7 +198,21 @@ def personal_graph_api(request):
         else:
             group = "unvisited_location"
 
-        nodes_dict[tag_node_id] = {"id": tag_node_id, "label": loc, "group": group}
+        # 追加：Locationテーブルに情報があればそれを使用し、なければIDをそのまま使う
+        loc_obj = locations_info.get(loc)
+        display_name = loc_obj.name if loc_obj else loc
+        detail_text = loc_obj.description if loc_obj else "未登録の場所です。"
+        category = loc_obj.category if loc_obj else "unknown"
+
+        nodes_dict[tag_node_id] = {
+            "id": tag_node_id,
+            # "label": loc,
+            # "group": group,
+            "label": display_name,
+            "group": group,
+            "detail": detail_text,
+            "category": category
+        }
 
     # ② 自分の思考ノードとエッジ（線）
     for event in user_events:
