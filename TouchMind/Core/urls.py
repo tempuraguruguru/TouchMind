@@ -29,4 +29,5 @@ urlpatterns = [
     path('api/get-locations/', views.get_locations_api, name = 'get_locations_api'),
     path('api/bulk-add-locations/', views.bulk_add_locations_api, name = 'bulk_add_locations_api'),
     path('api/update-location/', views.update_location_api, name = 'update_location_api'),
+    path('api/delete-location/', views.delete_location_api, name = 'delete_location_api'),
 ]

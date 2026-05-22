@@ -40,10 +40,14 @@ function loadExistingLocations() {
                     <td><strong>${loc.tag_id}</strong></td>
                     <td>${loc.name}</td>
                     <td>${catText}</td>
-                    <td><div class="desc-preview">${loc.description}</div></td>
+                    <td><div class = "desc-preview">${loc.description}</div></td>
                     <td>
-                        <button class="btn btn-primary" style="padding: 4px 8px; font-size: 12px;"
-                                onclick="openSidebar('edit', '${loc.tag_id}')">✏️ 修正</button>
+                        <div style = "display: flex; gap: 5px;">
+                            <button class = "btn btn-primary" style = "padding: 4px 8px; font-size: 12px;"
+                                    onclick = "openSidebar('edit', '${loc.tag_id}')">✏️ 修正</button>
+                            <button class = "btn btn-danger" style = "padding: 4px 8px; font-size: 12px;"
+                                        onclick = "deleteLocation('${loc.tag_id}')">🗑️ 削除</button>
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -155,4 +159,41 @@ function saveLocation() {
         }
     })
     .catch(err => console.error(err));
+}
+
+function deleteLocation(tagId) {
+    // まずは場所自体の削除確認
+    if (!confirm(`「${tagId}」の場所設定を削除しますか？`)) {
+        return; // キャンセルされたらここでストップ
+    }
+
+    // ネットワーク（思考ログ）も削除するかの選択
+    // OKを押せば true、キャンセルを押せば false が入ります
+    const deleteEvents = confirm(
+        `【追加確認：ネットワークからの削除】\n` +
+        `この場所で記録された「過去の思考ログ」もすべて削除しますか？\n\n` +
+        `[ OK ] ➔ 思考ログも含めて完全に削除する（ネットワーク図から消えます）\n` +
+        `[キャンセル] ➔ 場所の名前や設定だけを削除し、過去の思考ログは残す`
+    );
+
+    // サーバーへ送信
+    fetch('/api/delete-location/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken
+        },
+        body: JSON.stringify({
+            tag_id: tagId,
+            delete_events: deleteEvents // ユーザーの選択をサーバーに送る
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert(data.message);
+        if (data.status === 'success') {
+            loadExistingLocations(); // 一覧を再読み込み
+        }
+    })
+    .catch(err => console.error('削除エラー:', err));
 }

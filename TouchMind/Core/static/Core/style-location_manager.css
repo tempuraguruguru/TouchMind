@@ -1,6 +1,5 @@
 .container {
     padding: 20px;
-    max-width: 1000px;
     margin: 0 auto;
 }
 
@@ -66,6 +65,11 @@ th {
 
 .btn-secondary {
     background: #6c757d;
+    color: white;
+}
+
+.btn-danger {
+    background: #dc3545;
     color: white;
 }
 

@@ -113,7 +113,7 @@ def graph_api(request):
     """
     events = Event.objects.all()
 
-    # 追加：DBからすべてのLocation情報を取得し、tag_idをキーにした辞書を作成
+    # DBからすべてのLocation情報を取得し、tag_idをキーにした辞書を作成
     locations_info = {loc.tag_id: loc for loc in Location.objects.all()}
 
     nodes_dict = {}
@@ -129,22 +129,18 @@ def graph_api(request):
         # 2. タグノード（場所・モノ）
         tag_node_id = f"tag_{event.tag_id}"
         if tag_node_id not in nodes_dict:
-            # ★追加：Locationテーブルから該当する場所のオブジェクトを取得
             loc_obj = locations_info.get(event.tag_id)
 
-            # 情報があればそれを使用し、なければ登録されたtag_id（英名など）をそのまま使う
             display_name = loc_obj.name if loc_obj else event.tag_id
             detail_text = loc_obj.description if loc_obj else "未登録の場所です。"
             category = loc_obj.category if loc_obj else "unknown"
 
             nodes_dict[tag_node_id] = {
                 "id": tag_node_id,
-                # "label": event.tag_id,
-                # "group": "location",
-                "label": display_name,  # わかりやすい名前に上書き
+                "label": display_name,
                 "group": "location",
-                "detail": detail_text,  # 詳細パネル用
-                "category": category    # 詳細パネル用
+                "detail": detail_text,
+                "category": category
             }
 
         # 3. イベントノード（思考内容）
@@ -153,12 +149,21 @@ def graph_api(request):
         nodes_dict[event_node_id] = {"id": event_node_id, "label": short_text, "group": "thought"}
 
         # 4. エッジ（線）を結ぶ
-        # 人 → 思考
         links.append({"source": user_node_id, "target": event_node_id})
-        # 場所 → 思考
         links.append({"source": tag_node_id, "target": event_node_id})
 
-    # リスト形式に変換してJSONで返す
+    # ★追加：Eventには存在しないが、Locationとして事前登録されている場所もノードとして追加する
+    for loc in Location.objects.all():
+        tag_node_id = f"tag_{loc.tag_id}"
+        if tag_node_id not in nodes_dict:
+            nodes_dict[tag_node_id] = {
+                "id": tag_node_id,
+                "label": loc.name if loc.name else loc.tag_id,
+                "group": "unvisited_location", # ここはパーソナルグラフと色を合わせるか、locationのままでもOKです
+                "detail": loc.description if loc.description else "未登録の場所です。",
+                "category": loc.category
+            }
+
     data = {
         "nodes": list(nodes_dict.values()),
         "links": links
@@ -181,16 +186,18 @@ def personal_graph_api(request):
     """
     current_user = request.user
 
-    # 1. データベース上の「すべての場所(tag_id)」を重複なしで取得
-    all_locations = Event.objects.values_list('tag_id', flat=True).distinct()
+    # ★変更：EventテーブルとLocationテーブルの両方からタグを取得し、重複をなくす
+    event_locations = set(Event.objects.values_list('tag_id', flat = True))
+    registered_locations = set(Location.objects.values_list('tag_id', flat = True))
+    all_locations = event_locations.union(registered_locations)
 
     # 2. 「現在のユーザー」の思考ログだけを取得
     user_events = Event.objects.filter(user=current_user)
 
     # ユーザーが訪れたことのある場所のリストを作成
-    visited_locations = set(user_events.values_list('tag_id', flat=True))
+    visited_locations = set(user_events.values_list('tag_id', flat = True))
 
-    # 追加：DBからすべてのLocation情報を取得し、tag_idをキーにした辞書を作成
+    # DBからすべてのLocation情報を取得し、tag_idをキーにした辞書を作成
     locations_info = {loc.tag_id: loc for loc in Location.objects.all()}
 
     nodes_dict = {}
@@ -205,7 +212,7 @@ def personal_graph_api(request):
         else:
             group = "unvisited_location"
 
-        # 追加：Locationテーブルに情報があればそれを使用し、なければIDをそのまま使う
+        # Locationテーブルに情報があればそれを使用し、なければIDをそのまま使う
         loc_obj = locations_info.get(loc)
         display_name = loc_obj.name if loc_obj else loc
         detail_text = loc_obj.description if loc_obj else "未登録の場所です。"
@@ -213,8 +220,6 @@ def personal_graph_api(request):
 
         nodes_dict[tag_node_id] = {
             "id": tag_node_id,
-            # "label": loc,
-            # "group": group,
             "label": display_name,
             "group": group,
             "detail": detail_text,
@@ -333,5 +338,35 @@ def update_location_api(request):
         location.save()
 
         return JsonResponse({"status": "success", "message": "場所の情報を更新しました。"})
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status = 400)
+
+
+@login_required
+@require_POST
+def delete_location_api(request):
+    """指定された場所（および任意で関連する思考ログ）を削除するAPI"""
+    try:
+        data = json.loads(request.body)
+        tag_id = data.get('tag_id', '')
+
+        # フロントエンドから「思考ログも消すか」の選択を受け取る
+        delete_events = data.get('delete_events', False)
+
+        location = Location.objects.filter(tag_id=tag_id).first()
+        if not location:
+            return JsonResponse({"status": "error", "message": "指定された場所が見つかりません。"}, status = 404)
+
+        # 1. まず場所の登録データを削除
+        location.delete()
+        message = f"「{tag_id}」の場所設定を削除しました。"
+
+        # 2. ユーザーが「思考ログも消す」を選択した場合
+        if delete_events:
+            # 現在のユーザーがその場所で記録したEvent（思考）をすべて削除
+            deleted_count, _ = Event.objects.filter(user=request.user, tag_id=tag_id).delete()
+            message = f"「{tag_id}」と、そこでの思考ログ（{deleted_count}件）をネットワークから完全に削除しました。"
+
+        return JsonResponse({"status": "success", "message": message})
     except Exception as e:
         return JsonResponse({"status": "error", "message": str(e)}, status = 400)
