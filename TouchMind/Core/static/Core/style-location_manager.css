@@ -1,13 +1,35 @@
-/* メインレイアウト */
-.container { padding: 20px; max-width: 1000px; margin: 0 auto; }
-.section-box { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+.container {
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
 
-/* テーブルのスタイル */
-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-th, td { border: 1px solid #eee; padding: 10px; text-align: left; vertical-align: top; }
-th { background: #f9f9f9; }
+.section-box {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
 
-/* メモ欄を2行で省略する設定 */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th, td {
+    border: 1px solid #eee;
+    padding: 10px;
+    text-align: left;
+    vertical-align: top;
+}
+
+th {
+    background: #f9f9f9;
+}
+
 .desc-preview {
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -18,48 +40,130 @@ th { background: #f9f9f9; }
     white-space: pre-wrap;
 }
 
-/* ボタン共通 */
-.btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.2s; }
-.btn:hover { opacity: 0.8; }
-.btn-primary { background: #0066cc; color: white; }
-.btn-success { background: #28a745; color: white; }
-.btn-secondary { background: #6c757d; color: white; }
-
-/* =========================================
-   サイドバー (Drawer) のスタイル
-   ========================================= */
-.sidebar-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5); z-index: 1000;
-    opacity: 0; visibility: hidden; transition: 0.3s;
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: 0.2s;
 }
-.sidebar-overlay.open { opacity: 1; visibility: visible; }
+
+.btn:hover {
+    opacity: 0.8;
+}
+
+.btn-primary {
+    background: #0066cc;
+    color: white;
+}
+
+.btn-success {
+    background: #28a745;
+    color: white;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s;
+}
+
+.sidebar-overlay.open {
+    opacity: 1;
+    visibility: visible;
+}
 
 .sidebar {
-    position: fixed; top: 0; right: -450px; /* 初期状態は右画面外 */
-    width: 400px; height: 100vh;
-    background: #fff; box-shadow: -4px 0 15px rgba(0,0,0,0.1);
-    z-index: 1001; transition: right 0.3s ease;
-    display: flex; flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: -450px; /* 初期状態は右画面外 */
+    width: 400px;
+    height: 100vh;
+    background: #fff;
+    box-shadow: -4px 0 15px rgba(0,0,0,0.1);
+    z-index: 1001;
+    transition: right 0.3s ease;
+    display: flex;
+    flex-direction: column;
 }
-.sidebar.open { right: 0; /* クラスが付くと画面内へスライド */ }
+
+.sidebar.open {
+    right: 0; /* クラスが付くと画面内へスライド */
+}
 
 .sidebar-header {
-    padding: 20px; border-bottom: 1px solid #eee;
-    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     background: #f9f9f9;
 }
-.sidebar-header h3 { margin: 0; font-size: 18px; color: #333; }
-.close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #999; padding: 0; }
-.close-btn:hover { color: #333; }
 
-.sidebar-content { padding: 20px; flex-grow: 1; overflow-y: auto; }
-.form-group { margin-bottom: 20px; }
-.form-group label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 14px; color: #444; }
-.form-group input, .form-group select, .form-group textarea {
-    width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px;
+.sidebar-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
 }
-.form-group input[readonly] { background: #f0f0f0; color: #666; cursor: not-allowed; }
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #999;
+    padding: 0; }
+
+.close-btn:hover {
+    color: #333;
+}
+
+.sidebar-content {
+    padding: 20px;
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 14px;
+    color: #444;
+}
+
+.form-group input, .form-group select, .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+.form-group input[readonly] {
+    background: #f0f0f0;
+    color: #666;
+    cursor: not-allowed;
+}
 
 .sidebar-footer {
     padding: 20px; border-top: 1px solid #eee; background: #fafafa;

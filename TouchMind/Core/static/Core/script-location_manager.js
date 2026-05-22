@@ -28,11 +28,11 @@ function loadExistingLocations() {
             locationsData = data.locations; // データを保存
             const tbody = document.getElementById('existing-tbody');
             tbody.innerHTML = '';
-            
+
             data.locations.forEach(loc => {
                 // カテゴリの表示変換
-                let catText = loc.category === 'work' ? '💻 ワーク' : 
-                              loc.category === 'relax' ? '☕ リラックス' : 
+                let catText = loc.category === 'work' ? '💻 ワーク' :
+                              loc.category === 'relax' ? '☕ リラックス' :
                               loc.category === 'pokemon' ? '🎮 ポケモン' : '🚃 移動';
 
                 const tr = document.createElement('tr');
@@ -42,7 +42,7 @@ function loadExistingLocations() {
                     <td>${catText}</td>
                     <td><div class="desc-preview">${loc.description}</div></td>
                     <td>
-                        <button class="btn btn-primary" style="padding: 4px 8px; font-size: 12px;" 
+                        <button class="btn btn-primary" style="padding: 4px 8px; font-size: 12px;"
                                 onclick="openSidebar('edit', '${loc.tag_id}')">✏️ 修正</button>
                     </td>
                 `;
@@ -59,13 +59,13 @@ function openSidebar(mode, tagId = '') {
     const overlay = document.getElementById('sidebar-overlay');
     const title = document.getElementById('sidebar-title');
     const formMode = document.getElementById('form-mode');
-    
+
     // フォームのリセット
     document.getElementById('sb-tag-id').value = '';
     document.getElementById('sb-name').value = '';
     document.getElementById('sb-category').value = 'work';
     document.getElementById('sb-desc').value = '';
-    
+
     formMode.value = mode;
 
     if (mode === 'create') {
@@ -76,7 +76,7 @@ function openSidebar(mode, tagId = '') {
         title.innerText = '✏️ 場所の編集';
         document.getElementById('sb-tag-id').readOnly = true; // 編集時はTag IDをロック
         document.getElementById('keep-open-wrapper').style.display = 'none'; // 連続追加を隠す
-        
+
         // 既存のデータをフォームに流し込む
         const loc = locationsData.find(l => l.tag_id === tagId);
         if (loc) {
@@ -103,7 +103,7 @@ function saveLocation() {
     const name = document.getElementById('sb-name').value.trim();
     const category = document.getElementById('sb-category').value;
     const description = document.getElementById('sb-desc').value.trim();
-    
+
     if (!tagId) {
         alert("Tag IDは必須です。");
         return;
@@ -139,7 +139,7 @@ function saveLocation() {
     .then(data => {
         if (data.status === 'success') {
             loadExistingLocations(); // 一覧を更新
-            
+
             // 「続けて登録する」にチェックが入っていればフォームを空にして待機
             const keepOpen = document.getElementById('sb-keep-open').checked;
             if (mode === 'create' && keepOpen) {

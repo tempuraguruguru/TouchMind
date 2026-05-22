@@ -8,70 +8,70 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2 style="margin: 0;">📍 場所（NFCタグ）の管理</h2>
-        <button class="btn btn-success" onclick="openSidebar('create')">➕ 新規場所を追加</button>
+<div class = "container">
+    <div style = "display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 style = "margin: 0;">📍 場所（NFCタグ）の管理</h2>
+        <button class = "btn btn-success" onclick = "openSidebar('create')">➕ 新規場所を追加</button>
     </div>
 
-    <div class="section-box">
-        <table id="existing-locations-table">
+    <div class = "section-box">
+        <table id = "existing-locations-table">
             <thead>
                 <tr>
-                    <th style="width: 20%;">Tag ID</th>
-                    <th style="width: 25%;">場所の名前</th>
-                    <th style="width: 15%;">カテゴリ</th>
-                    <th style="width: 30%;">詳細・メモ</th>
-                    <th style="width: 10%;">操作</th>
+                    <th style = "width: 20%;">Tag ID</th>
+                    <th style = "width: 25%;">場所の名前</th>
+                    <th style = "width: 15%;">カテゴリ</th>
+                    <th style = "width: 30%;">詳細・メモ</th>
+                    <th style = "width: 10%;">操作</th>
                 </tr>
             </thead>
-            <tbody id="existing-tbody">
+            <tbody id = "existing-tbody">
                 </tbody>
         </table>
     </div>
 
-    <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+    <div id = "sidebar-overlay" class = "sidebar-overlay" onclick = "closeSidebar()"></div>
 
-    <div id="sidebar" class="sidebar">
-        <div class="sidebar-header">
-            <h3 id="sidebar-title">場所の登録</h3>
-            <button class="close-btn" onclick="closeSidebar()">×</button>
+    <div id = "sidebar" class = "sidebar">
+        <div class = "sidebar-header">
+            <h3 id = "sidebar-title">場所の登録</h3>
+            <button class = "close-btn" onclick = "closeSidebar()">×</button>
         </div>
 
-        <div class="sidebar-content">
-            <input type="hidden" id="form-mode" value="create">
+        <div class = "sidebar-content">
+            <input type = "hidden" id = "form-mode" value = "create">
 
-            <div class="form-group">
-                <label>Tag ID (NFCに書き込むID) <span style="color:red;">*</span></label>
-                <input type="text" id="sb-tag-id" placeholder="例: desk_01">
+            <div class = "form-group">
+                <label>Tag ID (NFCに書き込むID) <span style = "color:red;">*</span></label>
+                <input type = "text" id = "sb-tag-id" placeholder = "例: desk_01">
             </div>
-            <div class="form-group">
+            <div class = "form-group">
                 <label>場所の名前 (空欄時はTag IDを適用)</label>
-                <input type="text" id="sb-name" placeholder="例: 自宅のデスク">
+                <input type = "text" id = "sb-name" placeholder = "例: 自宅のデスク">
             </div>
-            <div class="form-group">
+            <div class = "form-group">
                 <label>カテゴリ</label>
-                <select id="sb-category">
-                    <option value="work">💻 ワーク（研究・作業）</option>
-                    <option value="relax">☕ リラックス（カフェ・自宅）</option>
-                    <option value="pokemon">☕ 🎮 ポケモン</option>
-                    <option value="transit">🚃 移動・その他</option>
+                <select id = "sb-category">
+                    <option value = "work">💻 ワーク（研究・作業）</option>
+                    <option value = "relax">☕ リラックス（カフェ・自宅）</option>
+                    <option value = "pokemon">☕ 🎮 ポケモン</option>
+                    <option value = "transit">🚃 移動・その他</option>
                 </select>
             </div>
-            <div class="form-group">
+            <div class = "form-group">
                 <label>詳細・メモ (複数行入力可能)</label>
-                <textarea id="sb-desc" rows="6" placeholder="この場所でのコンテキスト、雰囲気、ルールなどを自由に記述してください。"></textarea>
+                <textarea id = "sb-desc" rows = "6" placeholder = "この場所でのコンテキスト、雰囲気、ルールなどを自由に記述してください。"></textarea>
             </div>
         </div>
 
-        <div class="sidebar-footer">
-            <label id="keep-open-wrapper" style="font-size: 13px; color: #555; margin-right: auto; cursor: pointer;">
-                <input type="checkbox" id="sb-keep-open"> 続けて登録する
+        <div class = "sidebar-footer">
+            <label id = "keep-open-wrapper" style = "font-size: 13px; color: #555; margin-right: auto; cursor: pointer;">
+                <input type = "checkbox" id = "sb-keep-open"> 続けて登録する
             </label>
-            <button class="btn btn-secondary" onclick="closeSidebar()">キャンセル</button>
-            <button class="btn btn-primary" onclick="saveLocation()">💾 保存</button>
+            <button class = "btn btn-secondary" onclick = "closeSidebar()">キャンセル</button>
+            <button class = "btn btn-primary" onclick = "saveLocation()">💾 保存</button>
         </div>
     </div>
-    <script src="{% static 'Core/script-location_manager.js' %}"></script>
+    <script src = "{% static 'Core/script-location_manager.js' %}"></script>
 </div>
 {% endblock %}
