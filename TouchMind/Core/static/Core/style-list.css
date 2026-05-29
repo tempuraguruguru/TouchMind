@@ -3,10 +3,6 @@ body{
     margin: 0;
 }
 
-#content-area{
-    padding: 20px;
-}
-
 table{
     width: 100%;
     border-collapse: collapse;
@@ -34,4 +30,9 @@ th{
     padding: 3px 8px;
     border-radius: 4px;
     font-size: 0.9em;
+}
+
+.container {
+    padding: 20px;
+    margin: 0 auto;
 }

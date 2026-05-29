@@ -20,22 +20,25 @@
                 <th>ユーザー</th>
                 <th>場所 / モノ (Tag ID)</th>
                 <th>思考内容</th>
+                <th style = "width: 80px;">操作</th> </tr>
             </tr>
         </thead>
         <tbody>
             {% for event in events %}
-            <tr>
+            <tr id = "event-row-{{ event.id }}" style = "transition: opacity 0.3s ease;">
                 <td class = "timestamp">{{ event.timestamp|date:"Y/m/d H:i" }}</td>
                 <td>{{ event.user.username|default:"匿名" }}</td>
                 <td><span class = "tag">{{ event.tag_id }}</span></td>
                 <td>{{ event.text }}</td>
+                <td><button class = "delete-btn" onclick = "deleteEvent('{{ event.id }}')">🗑️ 削除</button></td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan = "3" style = "text-align: center; color: #888;">まだ記録がありません。</td>
+                <td colspan = "5" style = "text-align: center; color: #888;">まだ記録がありません。</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    <script src = "{% static 'Core/script-personal_list.js' %}"></script>
 </div>
 {% endblock %}

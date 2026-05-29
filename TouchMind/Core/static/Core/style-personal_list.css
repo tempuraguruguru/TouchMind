@@ -3,10 +3,6 @@ body{
     margin: 0;
 }
 
-#content-area{
-    padding: 20px;
-}
-
 table{
     width: 100%;
     border-collapse: collapse;
@@ -34,4 +30,59 @@ th{
     padding: 3px 8px;
     border-radius: 4px;
     font-size: 0.9em;
+}
+
+.container {
+    padding: 20px;
+    /* max-width: 800px; */
+    margin: 0 auto;
+}
+
+.event-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: opacity 0.3s ease; /* 削除時のフワッと消えるアニメーション用 */
+}
+
+.event-header {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* 縦位置を揃える */
+}
+
+.event-tag {
+    background: #e6f2ff;
+    color: #0066cc;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-weight: bold;
+}
+
+.event-text {
+    font-size: 1.1em;
+    color: #333;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    color: #dc3545;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: 0.2s;
+}
+
+.delete-btn:hover {
+    background: #fee2e2;
 }

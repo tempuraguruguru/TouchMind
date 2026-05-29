@@ -7,6 +7,7 @@ urlpatterns = [
 
     # APIエンドポイント
     path('api/record/', views.record_event, name = 'record_event'), ## API検証用
+    path('api/delete-event/', views.delete_event_api, name='delete_event_api'),
     path('api/graph-data/', views.graph_api, name = 'graph_api'),
     path('api/personal-graph-data/', views.personal_graph_api, name = 'personal_graph_api'),
 
