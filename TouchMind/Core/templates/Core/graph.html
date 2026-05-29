@@ -31,10 +31,11 @@
         </div>
     </div>
 
-    <div id = "detail-panel">
+    <div id = "detail-panel" onmousedown="event.stopPropagation();" onmouseup="event.stopPropagation();">
         <h3 id = "detail-title">場所の名前</h3>
         <span id = "detail-category">カテゴリ</span>
         <p id = "detail-desc">ここにコンテキストやメモが表示されます。</p>
+        <button id = "detail-record-btn" href = "#">✍️ ここで思考を記録する</button>
     </div>
 
     <div id = "hint-layer">

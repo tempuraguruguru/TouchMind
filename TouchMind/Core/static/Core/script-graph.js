@@ -208,7 +208,7 @@ function mousePressed() {
             energy = 1.0;
             nodeClicked = true;
 
-            // 追加：クリックしたのが場所ノードなら詳細パネルを表示
+            // クリックしたのが場所ノードなら詳細パネルを表示
             if (n.group.includes('location')) {
                 document.getElementById('detail-title').innerText = n.label;
 
@@ -219,6 +219,16 @@ function mousePressed() {
 
                 document.getElementById('detail-category').innerText = catText;
                 document.getElementById('detail-desc').innerText = n.detail || "詳細情報がありません。";
+
+                // ノードのIDは "tag_desk_01" のようになっているため、先頭の "tag_" を取り除いて純粋なIDにします
+                let actualTagId = n.id.replace('tag_', '');
+
+                // href属性ではなく、クリックイベントで強制的に遷移させる
+                let recordBtn = document.getElementById('detail-record-btn');
+                recordBtn.onclick = function(e) {
+                    e.stopPropagation(); // 念のためここでもイベント伝播をストップ
+                    window.location.href = `/?tag_id=${actualTagId}`;
+                };
 
                 detailPanel.style.display = 'block'; // パネルを表示
             } else {

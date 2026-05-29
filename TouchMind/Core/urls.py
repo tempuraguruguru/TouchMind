@@ -13,7 +13,7 @@ urlpatterns = [
 
     # 画面表示用のURL
     path('list/', views.event_list, name = 'event_list'), ## 保存されたイベントの一覧表示
-    path('personal-list/', views.personal_event_list, name='personal_event_list'),
+    path('personal-list/', views.personal_event_list, name = 'personal_event_list'),
 
     # ユーザー認証関連のURL
     path('signup/', views.signup, name = 'signup'), ## 新規ユーザー登録画面

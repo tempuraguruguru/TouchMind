@@ -76,3 +76,17 @@ kbd {
     color: #555;
     line-height: 1.6;
 }
+
+#detail-record-btn{
+    display: block;
+    text-align: center;
+    background: #28a745;
+    color: white;
+    text-decoration: none;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 14px;
+    transition: 0.2s;
+    margin-top: 20px;
+}

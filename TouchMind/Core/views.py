@@ -381,14 +381,14 @@ def delete_event_api(request):
         event_id = data.get('event_id')
 
         # filterに user=request.user を入れることで、他人のログを勝手に消されるのを防ぎます
-        event = Event.objects.filter(id=event_id, user=request.user).first()
+        event = Event.objects.filter(id = event_id, user = request.user).first()
 
         if not event:
-            return JsonResponse({"status": "error", "message": "指定されたログが見つからないか、削除する権限がありません。"}, status=404)
+            return JsonResponse({"status": "error", "message": "指定されたログが見つからないか、削除する権限がありません。"}, status = 404)
 
         # データベースから削除
         event.delete()
-        
+
         return JsonResponse({"status": "success", "message": "思考ログを削除しました。"})
     except Exception as e:
-        return JsonResponse({"status": "error", "message": str(e)}, status=400)
+        return JsonResponse({"status": "error", "message": str(e)}, status = 400)
